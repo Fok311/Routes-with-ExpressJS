@@ -17,51 +17,61 @@ let authors = [
 ];
 
 // Your routing and controller code goes here
-app.get("/books",( request, response) => {
-    response.json(books);
+app.get("/books", (request,response) => {
+  response.status(200).json(books);
 })
 
-app.get("/reviews",( request, response) => {
-    response.json(reviews);
-})
-
-app.get("/authors",( request, response) => {
-    response.json(authors);
-})
-
-app.get("/books/:id", (request, response) => {
-    // retrieve the data based on the ID provided
-    const selectedBook = books.find(i => i.id === request.params.id);
-    const author = authors.find(i => i.id === selectedBook.authorId);
-    response.json({
-        id: selectedBook.id,
-        title: selectedBook.title,
-        description: selectedBook.description,
-        authorId: selectedBook.authorId,
-        name: author.name,
-        bio: author.bio
+app.get("/books/:id", (request,response) => {
+  const book = books.find( b => b.id === request.params.id );
+  if ( book ) {
+    const author = authors.find( a => a.id === book.authorId );
+    // response.status(200).json({
+    //   id: book.id,
+    //   title: book.title,
+    //   description: book.description,
+    //   name: author.name,
+    //   bio: author.bio
+    // });
+    response.status(200).json({
+      ...book,
+      name: author.name,
+      bio: author.bio
     });
-});
+  } else {
+    response.status(404).json("Book not found");
+  }
 
-app.get("/reviews/:id", (request, response) => {
-    // retrieve the data based on the ID provided
-    const selectedReview = reviews.find(i => i.id === request.params.id);
-    const BookId = books.find(i => i.id === selectedReview.bookId);
-    response.json({
-        id: selectedReview.id,
-        text: selectedReview.text,
-        bookId: selectedReview.bookId,
-        book_title: BookId.title
+})
 
+app.get("/reviews", (request,response) => {
+  response.status(200).json(reviews);
+})
+
+app.get("/reviews/:id", (request,response) => {
+  const review = reviews.find( b => b.id === request.params.id );
+  if ( review ) {
+    const book = books.find( a => a.id === review.bookId );
+    response.status(200).json({
+      ...review,
+      book_title: book.title
     });
-});
+  } else {
+    response.status(404).json("Review not found");
+  }
+})
 
-app.get("/authors/:id", (request, response) => {
-    // retrieve the data based on the ID provided
-    const selected = authors.find( i => i.id === request.params.id );
-    response.json(selected);
-});
+app.get("/authors", (request,response) => {
+  response.status(200).json(authors);
+})
 
+app.get("/authors/:id", (request,response) => {
+  const author = authors.find( b => b.id === request.params.id );
+  if ( author ) {
+    response.status(200).json(author);
+  } else {
+    response.status(404).json("Author not found");
+  }
+})
 
 app.listen(5000, () => {
   console.log('Bookstore app is running on port 5000');
