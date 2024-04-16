@@ -31,14 +31,29 @@ app.get("/authors",( request, response) => {
 
 app.get("/books/:id", (request, response) => {
     // retrieve the data based on the ID provided
-    const selected = books.find( i => i.id === request.params.id );
-    response.json(selected);
+    const selectedBook = books.find(i => i.id === request.params.id);
+    const author = authors.find(i => i.id === selectedBook.authorId);
+    response.json({
+        id: selectedBook.id,
+        title: selectedBook.title,
+        description: selectedBook.description,
+        authorId: selectedBook.authorId,
+        name: author.name,
+        bio: author.bio
+    });
 });
 
 app.get("/reviews/:id", (request, response) => {
     // retrieve the data based on the ID provided
-    const selected = reviews.find( i => i.id === request.params.id );
-    response.json(selected);
+    const selectedReview = reviews.find(i => i.id === request.params.id);
+    const BookId = books.find(i => i.id === selectedReview.bookId);
+    response.json({
+        id: selectedReview.id,
+        text: selectedReview.text,
+        bookId: selectedReview.bookId,
+        book_title: BookId.title
+
+    });
 });
 
 app.get("/authors/:id", (request, response) => {
